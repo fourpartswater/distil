@@ -250,7 +250,7 @@ func FeaturizePrimitive(schemaFile string, index string, dataset string, config 
 	mainDR := meta.GetMainDataResource()
 
 	// add feature variables
-	features, err := getClusterVariables(meta, "_feature_")
+	features, err := getFeatureVariables(meta, "_feature_")
 	if err != nil {
 		return errors.Wrap(err, "unable to get feature variables")
 	}
@@ -486,7 +486,7 @@ func getFeatureVariables(meta *metadata.Metadata, prefix string) ([]*FeatureRequ
 				v := metadata.NewVariable(len(mainDR.Variables), indexName, "label", v.Name, "string", "string", "", "", []string{"attribute"}, metadata.VarRoleMetadata, nil, mainDR.Variables, false)
 
 				// create the required pipeline
-				step, err := description.CreateCrocPipeline("leather", "", []string{v.Name}, []string{indexName})
+				step, err := description.CreateCrocPipeline("leather", "", []string{denormFieldName}, []string{indexName})
 				if err != nil {
 					return nil, errors.Wrap(err, "unable to create step pipeline")
 				}
@@ -526,7 +526,7 @@ func getClusterVariables(meta *metadata.Metadata, prefix string) ([]*FeatureRequ
 				var step *pipeline.PipelineDescription
 				var err error
 				if res.CanBeFeaturized() {
-					step, err = description.CreateUnicornPipeline("horned", "", []string{v.Name}, []string{indexName})
+					step, err = description.CreateUnicornPipeline("horned", "", []string{denormFieldName}, []string{indexName})
 				} else {
 					step, err = description.CreateSlothPipeline("leaf", "", []string{v.Name}, []string{indexName})
 				}
